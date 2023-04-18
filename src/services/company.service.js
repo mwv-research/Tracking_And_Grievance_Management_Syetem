@@ -7,8 +7,9 @@ const CreateCompany = async ( newRegistration ) => Company.create({...newRegistr
 const FetchByToken = async ( verificationToken ) => Company.findOne({verificationToken});
 
 const UpdateVerificationStatus = async ( companyId ) => {
-    Company.findByIdAndUpdate({_id: companyId}, {isVerified : true}, {new: true})
+    Company.findOneAndUpdate(companyId, {$set: {isVerified : true}})
 };
+
 const FetchCompanyByEmail = async ( email ) => Company.findOne({email});
 
 export {
@@ -17,5 +18,4 @@ export {
     FetchByToken,
     UpdateVerificationStatus,
     FetchCompanyByEmail,
-    
 }

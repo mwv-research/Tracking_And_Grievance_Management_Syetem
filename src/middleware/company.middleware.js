@@ -1,5 +1,5 @@
 import { body, validationResult, oneOf } from "express-validator";
-import ResponseCreator from "../utils/response.creator.js";
+import GenerateResponse from "../utils/response.creator.js"
 
 //Validator for registering a user
 const registerValidator = [
@@ -19,7 +19,7 @@ const registerValidator = [
     (req, res, next) => {
         const errors = validationResult(req);
         if(!errors.isEmpty()) {
-            return ResponseCreator.generateResponse(
+            return GenerateResponse(
                 res,
                 400,
                 {
@@ -35,11 +35,11 @@ const registerValidator = [
 //Validator for logging a variable
 const loginValidator = [
     body("email", "Please enter a valid email address").isEmail(),
-    body("password", "Password is required").trim().notEmpty(),
+    body("password", "Password is required").trim().notEmpty().isLength({ min: 6 }),
     (req, res, next) => {
         const errors = validationResult(req);
         if(!errors.isEmpty()) {
-            return ResponseCreator.generateResponse(res, 400, {
+            return GenerateResponse(res, 400, {
                 error: errors.array(),
             });
         } 

@@ -38,9 +38,19 @@ const employee = new Schema({
         type: Boolean,
         default: false
     },
+    verificationToken: {
+        type: String,
+        default: null,
+    },
+    verificationTokenExpires: {
+        type: Number,
+        default: null,
+    }
     
 }, {timestamps: true});
 
 const Employee = mongoose.model('Employee', employee);
 
-module.exports = Employee;
+export{
+    Employee
+}

@@ -75,6 +75,8 @@ const company = new Schema({
 
 const Company = mongoose.model('Company', company);
 
+
+
 export{
     Company
 }

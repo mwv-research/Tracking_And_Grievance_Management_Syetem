@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import { connect } from './configs/db.config.js'
 import { companyRouter } from './routes/company.route.js'
+import { employeeRouter } from './routes/employee.route.js'
 
 dotenv.config();
 
@@ -15,6 +16,8 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 app.use("/company", companyRouter);
+
+app.use("/employee", employeeRouter);
 
 app.get("/", async(req,res)=>{
     res.send(`The server is running since ${new Date()}`)

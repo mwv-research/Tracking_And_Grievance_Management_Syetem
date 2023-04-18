@@ -1,49 +1,57 @@
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import GenerateResponse from "../utils/response.creator.js"
+import GenerateResponse from "../utils/response.creator.js";
 import * as companyServices from "../services/company.service.js";
+import * as employeeServices from "../services/employee.service.js";
 
-const RegisterCompany = async (req, res) => {
+const RegisterEmployee = async (req, res) => {
     try {
-        const newRegistration = {
-            companyName : req.body.companyName,
+        const newEmployee = {
+            employeeId : req.body.employeeId,
             companyId : req.body.companyId,
-            email : req.body.email,
-            password : req.body.password,
-            address : req.body.address,
-            registrationNumber : req.body.registrationNumber,
-            phoneNumber : req.body.phoneNumber,
-            ceoName : req.body.ceoName,
-            ceoContactNumber : req.body.ceoContactNumber,
-            ceoEmail : req.body.ceoEmail,
-            ceoAadhaarNumber : req.body.ceoAadhaarNumber,
+            employeeName : req.body.employeeName,
+            employeeType : req.body.employeeType,
+            employeeContactNumber : req.body.employeeContactNumber,
+            employeeEmail : req.body.employeeEmail,
+            employeePassword : req.body.employeePassword,
             verificationToken : crypto.randomBytes(32).toString("hex"),
             verificationTokenExpires : Date.now() + 3600000,
         };
+        
+        const existingCompany = await companyServices.FetchCompanyById(newEmployee.companyId);
     
-        const existingCompany = await companyServices.FetchCompanyById(newRegistration.companyId);
-    
-        if(existingCompany){
+        if(!existingCompany){
             return GenerateResponse(
                 res, 
                 400,
                 {},
-                "The Registration already Exist"
+                "The Company does not Exist"
+            );
+        };
+
+        const existingEmployee = await employeeServices.FetchEmployeeById(newEmployee.employeeId);
+    
+        if(existingEmployee){
+            return GenerateResponse(
+                res, 
+                400,
+                {},
+                "The employee already Exist"
             );
         };
     
-        const token = newRegistration.verificationToken;
+        const token = newEmployee.verificationToken;
 
-        newRegistration.password = await bcrypt.hash(newRegistration.password, parseInt(process.env.SALT));
+        newEmployee.employeePassword = await bcrypt.hash(newEmployee.employeePassword, parseInt(process.env.SALT));
     
-        await companyServices.CreateCompany(newRegistration);
+        await employeeServices.CreateEmployee(newEmployee);
     
         return GenerateResponse(
             res,
             200,
             {token},
-            "The Company has been enlisted for our services please proceed to filling the form",
+            "The Employee has been enlisted for our services",
         );
     } catch (error) {
         if(process.env.DEBUG == "TRUE") console.log(error);
@@ -63,20 +71,20 @@ const RegisterCompany = async (req, res) => {
     }
 }
 
-const VerifyCompany = async(req, res) => {
+const VerifyEmployee = async(req, res) => {
     try {
-        const verifyRegistration = {
+        const verifyEmployee = {
             verificationToken: req.body.verificationToken,
             verifictionTokenExpires: { $gt: Date.now() },
         };
 
-        const validToken = await companyServices.FetchByToken(verifyRegistration.verificationToken);
+        const validToken = await employeeServices.FetchByToken(verifyEmployee.verificationToken);
 
         if(!validToken){
             return GenerateResponse(res, 400)
         }
 
-        await companyServices.UpdateVerificationStatus(validToken.companyId);
+        await employeeServices.UpdateVerificationStatus(validToken.employeeId);
 
         return GenerateResponse(res, 201)
 
@@ -98,29 +106,29 @@ const VerifyCompany = async(req, res) => {
     }
 }
 
-const LoginCompany = async(req, res) => {
+const LoginEmployee = async(req, res) => {
     try {
-        const loginDetails = {
-            email: req.body.email,
-            password: req.body.password,
+        const employeeLoginDetails = {
+            employeeEmail: req.body.employeeEmail,
+            employeePassword: req.body.employeePassword,
         } 
 
-        const companyPresent = await companyServices.FetchCompanyByEmail(loginDetails.email);
+        const employeePresent = await employeeServices.FetchEmployeeByEmail(employeeLoginDetails.employeeEmail);
 
-        if (!companyPresent) return GenerateResponse(res, 404);
+        if (!employeePresent) return GenerateResponse(res, 404);
 
         const isMatched = await bcrypt.compare(
-            loginDetails.password,
-            String(companyPresent.password)
+            employeeLoginDetails.employeePassword,
+            String(employeePresent.employeePassword)
         );
         
         if (!isMatched) return GenerateResponse(res, 401)
 
-        if (companyPresent.isVerified === false) return GenerateResponse(res, 401)
+        if (employeePresent.isVerified === false) return GenerateResponse(res, 401)
 
         const payload = {
-            company: {
-                id: companyPresent._id,
+            employee: {
+                id: employeePresent._id,
             }
         };
 
@@ -136,7 +144,7 @@ const LoginCompany = async(req, res) => {
             res,
             200,
             {authToken, refToken},
-            "The User is now LoggedIn"
+            "The Employee is now LoggedIn"
         );
     } catch (error) {
         if(process.env.DEBUG == "TRUE") console.log(error);
@@ -157,8 +165,7 @@ const LoginCompany = async(req, res) => {
 }
 
 export {
-    RegisterCompany,
-    VerifyCompany,
-    LoginCompany,
-    
+    RegisterEmployee,
+    VerifyEmployee,
+    LoginEmployee,
 }
