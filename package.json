@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon ./src/tracking-grievance-api.js",
-    "start":"node ./src/tracking-grievance-api.js"
+    "start": "node ./src/tracking-grievance-api.js"
   },
   "repository": {
     "type": "git",
@@ -26,7 +27,7 @@
     "express": "^4.18.2",
     "express-validator": "^6.15.0",
     "jsonwebtoken": "^9.0.0",
-    "mongoose": "^7.0.3",
+    "mongoose": "^6.10.0",
     "morgan": "^1.10.0"
   },
   "devDependencies": {
