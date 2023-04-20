@@ -1,16 +1,16 @@
 import { Company } from "../models/company.model.js"
 
-const FetchCompanyById = async ( companyId ) => Company.findOne({companyId});
+const FetchCompanyById = async ( companyId ) => { Company.findOne({companyId}) };
 
-const CreateCompany = async ( newRegistration ) => Company.create({...newRegistration});
+const CreateCompany = async ( newRegistration ) => { Company.create({...newRegistration}) };
 
-const FetchByToken = async ( verificationToken ) => Company.findOne({verificationToken});
+const FetchByToken = async ( verificationToken ) => { Company.findOne({verificationToken}) };
 
 const UpdateVerificationStatus = async ( companyId ) => {
     Company.findOneAndUpdate(companyId, {$set: {isVerified : true}})
 };
 
-const FetchCompanyByEmail = async ( email ) => Company.findOne({email});
+const FetchCompanyByEmail = async ( email ) => { Company.findOne({email}) };
 
 export {
     FetchCompanyById,

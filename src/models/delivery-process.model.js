@@ -12,51 +12,44 @@ const deliveryProcess = new Schema({
         type: String,
         required: true,
     },
-    customer_phone_number: {
+    customerPhoneNumber: {
         type: Number,
         required: true
     },
-    itemDetails: {
+    itemId: {
         type: String,
         required: true
     },
-    purchaseDetails: {
-        type: String,
-        required: true
-    },
-    stage: {
+    deliveryStage: {
         type: String,
         enum: ["Order Processing", "Packaging and Labelling", "Transit", "Customer Clearance", "Delivery"],
-        required: true
+        default: "Order Processing"
     },
-    delivery_status: {
+    deliveryStatus: {
         type: String,
         enum: ["successful", "unsuccessful"],
-        required: true
+        default: "unsuccessful"
     },
     customerClearanceDate: {
         type: String,
-        required: true
     },
     deliveryOfficerIds: {
         type: Schema.Types.ObjectId,
-        required: true
     },
     currentStageOfficerId: {
         type: String,
-        required: true
     },
     currentStageStartTime: {
         type: String,
-        required: true
     },
     currentStageLocation: {
         type: String,
-        required: true
     },
     
 }, {timestamps: false});
 
 const DeliveryProcess = mongoose.model('DeliveryProcess', deliveryProcess);
 
-module.exports = DeliveryProcess;
+export {
+    DeliveryProcess
+}
